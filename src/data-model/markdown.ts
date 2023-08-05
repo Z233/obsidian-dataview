@@ -5,6 +5,7 @@ import { Literal, Link, Values } from "data-model/value";
 import { DataObject } from "index";
 import { SListItem, SMarkdownPage } from "data-model/serialized/markdown";
 import { Pos } from "obsidian";
+import { Plan } from "super-plan/types";
 
 /** All extracted markdown file metadata obtained from a file. */
 export class PageMetadata {
@@ -32,6 +33,8 @@ export class PageMetadata {
     public lists: ListItem[];
     /** The raw frontmatter for this document. */
     public frontmatter: Record<string, Literal>;
+    
+    public plans?: Plan[];
 
     public constructor(path: string, init?: Partial<PageMetadata>) {
         this.path = path;
@@ -40,6 +43,7 @@ export class PageMetadata {
         this.tags = new Set<string>();
         this.aliases = new Set<string>();
         this.links = [];
+        this.plans = [];
 
         Object.assign(this, init);
 
@@ -144,6 +148,7 @@ export class PageMetadata {
                 starred: index.starred.starred(this.path),
                 frontmatter: Values.deepCopy(this.frontmatter),
                 ext: this.extension(),
+                plans: this.plans
             },
         };
 

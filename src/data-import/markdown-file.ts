@@ -8,6 +8,9 @@ import { DateTime } from "luxon";
 import { CachedMetadata, FileStats, FrontMatterCache, HeadingCache } from "obsidian";
 import { canonicalizeVarName, extractDate, getFileTitle } from "util/normalize";
 import * as common from "data-import/common";
+import { SUPER_PLAN_CODE_BLOCK_LANG } from "super-plan/constants";
+import { parsePlan } from "super-plan/parser";
+import { Plan } from "super-plan/types";
 
 /** Extract markdown metadata from the given Obsidian markdown file. */
 export function parsePage(path: string, contents: string, stat: FileStats, metadata: CachedMetadata): PageMetadata {
@@ -75,6 +78,7 @@ export function parsePage(path: string, contents: string, stat: FileStats, metad
         mtime: DateTime.fromMillis(stat.mtime),
         size: stat.size,
         day: findDate(path, fields),
+        plans: markdownData.plans,
     });
 }
 
@@ -128,7 +132,7 @@ export function parseMarkdown(
     contents: string[],
     metadata: CachedMetadata,
     linksByLine: Record<number, Link[]>
-): { fields: Map<string, Literal[]>; lists: ListItem[] } {
+): { fields: Map<string, Literal[]>; lists: ListItem[]; plans: Plan[] } {
     let fields: Map<string, Literal[]> = new Map();
 
     // Extract task data and append the global data extracted from them to our fields.
@@ -145,9 +149,26 @@ export function parseMarkdown(
         for (let i = 0; i < line.lineCount; i++) listLinesToSkip.add(line.line + i);
     }
 
+    let plans: Plan[] = [];
+
     // Only parse heading and paragraph elements for inline fields; we will parse list metadata separately.
     for (let section of metadata.sections || []) {
         if (section.type == "list" || section.type == "ruling") continue;
+
+        if (section.type === "code") {
+            const lineStart = section.position.start.line;
+            const lineEnd = section.position.end.line;
+            const line = contents[lineStart];
+            const contentsClone = [...contents];
+            if (line.trimEnd() === "```" + SUPER_PLAN_CODE_BLOCK_LANG) {
+                const plan = parsePlan(contentsClone.splice(lineStart + 1, lineEnd - lineStart - 1));
+                if (plan)
+                    plans.push({
+                        activities: plan,
+                    });
+            }
+            continue;
+        }
 
         for (let lineno = section.position.start.line; lineno <= section.position.end.line; lineno++) {
             let line = contents[lineno];
@@ -168,7 +189,7 @@ export function parseMarkdown(
         }
     }
 
-    return { fields, lists };
+    return { fields, lists, plans };
 }
 
 // TODO: Consider using an actual parser in leiu of a more expensive regex.
