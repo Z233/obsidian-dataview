@@ -1,6 +1,6 @@
 {
   "name": "obsidian-dataview-modified",
-  "version": "0.5.55-modified.0",
+  "version": "0.5.56-modified.0",
   "description": "Advanced data views for Obsidian.md. Adapted to work with obsidian-super-plan.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
