@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-dataview",
-  "version": "0.5.55",
-  "description": "Advanced data views for Obsidian.md.",
+  "name": "obsidian-dataview-modified",
+  "version": "0.5.55-modified.0",
+  "description": "Advanced data views for Obsidian.md. Adapted to work with obsidian-super-plan.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -14,7 +14,8 @@
     "dev": "npx rollup --config rollup.config.js -w",
     "format": "npx prettier --write src",
     "lib": "npx rollup --config rollup.config.js --environment BUILD:lib",
-    "test": "npx jest"
+    "test": "npx jest",
+    "version": "node version-bump.mjs && git add manifest.json versions.json"
   },
   "keywords": [
     "obsidian",
