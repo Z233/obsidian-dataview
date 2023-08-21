@@ -22,7 +22,7 @@ Get page information (via `dv.page()`) for the page the script is currently exec
 
 ### `dv.pages(source)`
 
-Take a single string argument, `source`, which is the same form as a [query language source](../../query/sources).
+Take a single string argument, `source`, which is the same form as a [query language source](../../reference/sources).
 Return a [data array](../data-array) of page objects, which are plain objects with all of the page fields as
 values.
 
@@ -168,10 +168,26 @@ dv.taskList(dv.pages("#project").file.tasks
 
 ### `dv.table(headers, elements)`
 
-Render a dataview table with the given list of headers and 2D array of elements.
+Renders a dataview table. `headers` is an array of column headers. `elements` is an array of rows. Each row is itself an array of columns. Inside a row, every column which is an array will be rendered with bullet points.
 
 ```js
-// Render a simple table of book info sorted by rating.
+dv.table(
+	["Col1", "Col2", "Col3"],
+		[
+			["Row1", "Dummy", "Dummy"],
+			["Row2", 
+				["Bullet1",
+				 "Bullet2",
+				 "Bullet3"],
+			 "Dummy"],
+			["Row3", "Dummy", "Dummy"]
+		]
+	);
+```
+
+An example of how to render a simple table of book info sorted by rating.
+
+```js
 dv.table(["File", "Genre", "Time Read", "Rating"], dv.pages("#book")
     .sort(b => b.rating)
     .map(b => [b.file.link, b.genre, b["time-read"], b.rating]))
@@ -366,13 +382,13 @@ though will always be an object with a `type` denoting the return type. This ver
 
 ```javascript
 await dv.query("LIST FROM #tag") =>
-    Success { type: "list", values: [value1, value2, ...] }
+    { successful: true, value: { type: "list", values: [value1, value2, ...] } }
 
 await dv.query(`TABLE WITHOUT ID file.name, value FROM "path"`) =>
-    Success { type: "table", headers: ["file.name", "value"], values: [["A", 1], ["B", 2]] }
+    { successful: true, value: { type: "table", headers: ["file.name", "value"], values: [["A", 1], ["B", 2]] } }
 
 await dv.query("TASK WHERE due") =>
-    Success { type: "task", values: [task1, task2, ...]}
+    { successful: true, value: { type: "task", values: [task1, task2, ...] } }
 ```
 
 `dv.query` accepts two additional, optional arguments:
@@ -392,7 +408,7 @@ Equivalent to `dv.query()`, but returns rendered Markdown.
 
 ```js
 await dv.queryMarkdown("LIST FROM #tag") =>
-    Success { "- [[Page 1]]\n- [[Page 2]]" }
+    { successfult: true, value: { "- [[Page 1]]\n- [[Page 2]]" } }
 ```
 
 ### ⌛ `dv.tryQueryMarkdown(source, [file], [settings])`

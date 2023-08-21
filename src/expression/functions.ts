@@ -276,6 +276,21 @@ export namespace DefaultFunctions {
 
             return null;
         })
+        .add2("string", "string", (d, f) => {
+            if (f === "x" || f === "X") {
+                let match = NUMBER_REGEX.exec(d);
+                if (match) return DateTime.fromMillis(Number.parseInt(match[0]) * (f === "X" ? 1000 : 1));
+                else {
+                    throw Error("Not a number for format( (${ f }): ${ d }");
+                }
+            } else {
+                let parsedDate = DateTime.fromFormat(d, f);
+                if (parsedDate.isValid) return parsedDate;
+                else {
+                    throw Error(`Can't handle format (${f}) on date string (${d})`);
+                }
+            }
+        })
         .add1("null", () => null)
         .vectorize(1, [0])
         .build();
@@ -763,6 +778,18 @@ export namespace DefaultFunctions {
             type: link.type,
         }))
         .build();
+
+    // Concatenates sub-array elements into a new array
+    export const flat = new FunctionBuilder("flat")
+        .add1("array", a => {
+            return a.flat();
+        })
+        .add2("array", "number", (a, n) => {
+            // @ts-ignore
+            return a.flat(n);
+        })
+        .add1("null", () => null)
+        .build();
 }
 
 /** Default function implementations for the expression evaluator. */
@@ -815,6 +842,7 @@ export const DEFAULT_FUNCTIONS: Record<string, FunctionImpl> = {
     containsword: DefaultFunctions.containsword,
     reverse: DefaultFunctions.reverse,
     sort: DefaultFunctions.sort,
+    flat: DefaultFunctions.flat,
 
     // Aggregation operations like reduce.
     reduce: DefaultFunctions.reduce,

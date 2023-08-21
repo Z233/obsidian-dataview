@@ -62,6 +62,17 @@ date("2020-04-18") = <date object representing April 18th, 2020>
 date([[2021-04-16]]) = <date object for the given page, refering to file.day>
 ```
 
+### `date(text, format)`
+
+Parses a date from text to luxon `DateTime` with the specified format. Note localised formats might not work. 
+Uses [Luxon tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
+
+```js
+date("12/31/2022", "MM/dd/yyyy") => DateTime for Decemeber 31th, 2022
+date("210313", "yyMMdd") => DateTime for March 13th, 2021
+date("946778645000", "x") => DateTime for "2000-01-02T03:04:05"
+```
+
 ### `dur(any)`
 
 Parses a duration from the provided string or duration, returning null on failure.
@@ -462,6 +473,18 @@ Applies the function to each element in the array, returning a list of the mappe
 ```js
 map([1, 2, 3], (x) => x + 2) = [3, 4, 5]
 map(["yes", "no"], (x) => x + "?") = ["yes?", "no?"]
+```
+
+### `flat(array, [depth])`
+
+Concatenates sub-levels of the array to the desired depth. Default is 1 level, but it can
+concatenate multiple levels. E.g. Can be used to reduce array depth on `rows` lists after
+doing `GROUP BY`.
+
+```js
+flat(list(1, 2, 3, list(4, 5), 6)) => list(1, 2, 3, 4, 5, 6)
+flat(list(1, list(21, 22), list(list (311, 312, 313))), 4) => list(1, 21, 22, 311, 312, 313)
+flat(rows.file.outlinks)) => All the file outlinks at first level in output
 ```
 
 ---

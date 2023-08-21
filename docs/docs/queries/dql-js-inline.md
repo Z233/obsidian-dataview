@@ -8,6 +8,9 @@ when your vault changes.
 
 The [**Dataview Query Language**](../../queries/structure) (for short **DQL**) is a SQL-like language and Dataviews core functionality. It supports [four Query Types](./query-types.md) to produce different outputs, [data commands](./data-commands.md) to refine, resort or group your result and [plentiful functions](../reference/functions.md) which allow numerous operations and adjustments to achieve your wanted output. 
 
+!!! warning Differences to SQL
+    If you are familiar with SQL, please read [Differences to SQL](../../queries/differences-to-sql) to avoid confusing DQL with SQL.
+
 You create a **DQL** query with a codeblock that uses `dataview` as type:
 
 ~~~
@@ -103,7 +106,7 @@ create JS inline queries via inline code blocks:
 In inline DataviewJS, you have access to the `dv` variable, as in `dataviewjs` codeblocks, and can make all of the same calls. The result
 should be something which evaluates to a JavaScript value, which Dataview will automatically render appropriately.
 
-Unline Inline DQL queries, Inline JS queries do have access to everything a Dataview JS Query has available and can hence query and output multiple pages.
+Unlike Inline DQL queries, Inline JS queries do have access to everything a Dataview JS Query has available and can hence query and output multiple pages.
 
 !!! info "Change of Inline JS prefix"
     You can change the `$=` to another token (like `dvjs:` or `$~`) in Dataviews' settings under "Codeblock Settings" > "Javascript Inline Query Prefix"
